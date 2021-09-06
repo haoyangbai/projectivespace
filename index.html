@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Projective Space</title>
+  <link rel="icon" sizes="128x128" href="/images/icon.jpg">
+  <style>
+	fieldset {
+		border: 1; 
+		border-radius:20px; 
+		margin: 15px;
+		background-color: #000000;
+	}
+
+	h3 {
+		margin-top:5px;
+		margin-bottom:5px;
+		font-family: Helvetica, Tahoma, Arial, "PingFang SC", "WenQuanYi Micro Hei", sans-serif; 
+		color: #F0F0F0;
+	}
+
+	h1 {
+		font-family: Helvetica, Tahoma, Arial, "PingFang SC", "WenQuanYi Micro Hei", sans-serif;
+		color: #EEEEEE;
+		font-style: normal;
+		font-size: 20pt;
+		font-weight: 100; 
+	}
+
+	body {
+		background-color:#000000; 
+		color: #DDDDDD;
+		font-family: Helvetica, Tahoma, Arial, "PingFang SC", "WenQuanYi Micro Hei", sans-serif;
+		font-size: 12pt;
+		font-weight: 100; 
+	}
+	  
+	.row {
+		display: flex;
+	}
+
+	.column {
+		flex: 50%;
+	}
+
+	.column-70 {
+		flex: 60%;
+	}
+	
+	.column-30 {
+		flex: 30%;
+		min-width: 300px;
+	}
+
+	a {
+		color: #BBBBBB;
+	}
+
+	div.slider {
+		margin-top: 10px;
+	}
+
+	div.checkbox {
+		margin-top: 10px;
+	}
+
+	input[type=range] {
+		width:240px;
+	}
+
+	.container {
+  		height: 95vh;
+  		position: relative;
+/*		border: 2px solid green;  */
+	}
+
+	.center {
+		margin: 0;
+  		position: absolute;
+  		top: 50%;
+  		left: 50%;
+/*  		-ms-transform: translate(-50%, -50%); */
+  		transform: translate(-50%, -50%);
+	}
+
+	progress {
+		width: 350px;
+  		height: 80px;
+		top: 335px; 
+		left: 200px;
+		position: absolute;
+	}
+
+	body{transform: scale(0.67);}
+
+
+  .center .hide{
+    opacity: 0;
+  }
+
+	.center:hover .hide{
+    opacity: 1;
+  }
+
+  </style>
+
+</head>
+<body>
+	<div class="container" >
+		<div class="center" >
+			<h1 class="hide">使用密度波理论渲染星系</h1>
+			<div class="row" style="text-align: left;" >
+				<div class="column-30 controls hide">
+					<form>  
+						<fieldset > 
+							<h3>星系预设</h3>
+							<select id="cbPreset" name="viewpoint" onChange="onSelectPreset()" style="color:white;background:#333333;font-size: 12pt;border-radius: 2pt">
+								<option value="0" selected style="color:white;background:#333333;font-size: 8pt;">Sample 1</option>
+								<option value="1" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Two arms - 1</option>
+								<option value="2" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Two arms - 2</option>
+								<option value="3" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Two arms - 3</option>
+								<option value="5" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Two arms - 4</option>
+								<option value="4" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Two arms; Big Core</option>
+								<option value="6" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Eye of Sauron</option>
+								<option value="7" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Three arms - cool</option>
+								<option value="8" style="color:#EEEEEE;background:#333333;font-size: 8pt;">Three arms - hot</option>
+							</select>
+						</fieldset>
+
+						<fieldset>  
+							<h3>物理</h3>
+									<div class="checkbox">
+										<input type="checkbox" value="true" id="cbHasDarkMatter" onChange="onHasDarkMatter()"/> 
+										<label for="cbHasDarkMatter">暗物质影响</label><br/>
+									</div>
+									<div class="checkbox">
+										<input type="checkbox" value="true" id="cbShowVelocity" onChange="onShowVelocity()"/> 
+										<label for="cbShowVelocity">显示径向速度曲线</label><br/>
+									</div>
+
+								<div class="slider">
+									<label for="slTimeStep">时间步长（年）</label><br/>
+									<input type="range" min="0" max="1000000" value="50" class="slider" id="slTimeStep">
+									<span id="labelTimeStep"></span>
+								</div>
+
+								<div class="slider">
+									<label for="slBaseTemp">基础温度（开尔文）</label><br/>
+									<input type="range" min="1000" max="10000" step="10" class="slider" id="slBaseTemp">
+									<span id="labelBaseTemp"></span>
+								</div>
+						</fieldset>
+
+						<fieldset>  
+							<h3>显示</h3>
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowDensityWaves" onChange="onShowDensityWaves()"/> 
+								<label for="cbShowDensityWaves">密度波</label><br/>
+							</div>
+
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowAxis" onChange="onShowAxis()"/> 
+								<label for="cbShowAxis">轴线</label><br/>
+							</div>
+
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowStars" onChange="onShowStars()"/> 
+								<label for="cbShowStars">恒星</label><br/>
+							</div>
+			
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowDust" onChange="onShowDust()"/> 
+								<label for="cbShowDust">尘埃云</label><br/>
+							</div>
+
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowDustFilaments" onChange="onShowDustFilaments()"/> 
+								<label for="cbShowDustFilaments">尘埃细丝</label><br/>
+							</div>
+
+							<div class="checkbox">
+								<input type="checkbox" value="true" id="cbShowH2" onChange="onShowH2()"/> 
+								<label for="cbShowH2">H2区域</label><br/>
+							</div>
+
+							<div class="slider">
+								<label for="slFov">视野范围</label><br/>
+								<input type="range" min="5000" max="50000" value="50" class="slider" id="slFov">
+								<span id="labelFov"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slDustSize">尘埃表现尺寸</label><br/>
+								<input type="range" min="100" max="300" value="187" class="slider" id="slDustSize">
+								<span id="labelDustRenderSize"></span>
+							</div>
+						</fieldset>
+
+					</form>
+				</div> <!-- class=column-30 -->
+
+				<div class="column-70">
+
+					<div style="position:relative;">
+						<canvas id="cvGalaxy" width="800" height="800"></canvas>
+<!--						<progress id="idProgress">Please Wait</progress> -->
+					</div>
+
+					<p style="text-align: center;">
+						<a>网站正在建设中</a> | <a href="https://hbai.site">前往作者主页>></a>
+					</p>
+				</div> <!-- class=column-70 -->
+
+				<div class="column-30 controls hide">
+					<form>  
+						<fieldset>  
+							<h3>密度波</h3>
+							<div class="slider">
+								<label for="slCoreRad">星系核半径（光年）</label><br/>
+								<input type="range" min="0.05" max="0.95" step="0.01" class="slider" id="slCoreRad">
+								<span id="labelCoreRad"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slRad">星系半径（光年）</label><br/>
+								<input type="range" min="1000" max="20000" class="slider" id="slRad">
+								<span id="labelRad"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slAngOffset">角度偏移（°）</label><br/>
+								<input type="range" min="0.0001" max="0.0008" step="0.00001" class="slider" id="slAngOffset">
+								<span id="labelAngularOffset"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slInnerEx">内偏心率</label><br/>
+								<input type="range" min="0" max="2" step="0.01" class="slider" id="slInnerEx">
+								<span id="labelInnerEx"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slOutterEx">外偏心率</label><br/>
+								<input type="range" min="0" max="2" step="0.01" class="slider" id="slOutterEx">
+								<span id="labelOutterEx"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slPertN">椭圆摄动数</label><br/>
+								<input type="range" min="0" max="4" step="1" class="slider" id="slPertN">
+								<span id="labelPertN"></span>
+							</div>
+
+							<div class="slider">
+								<label for="slPertAmp">摄动阻尼因子</label><br/>
+								<input type="range" min="2" max="100" step="1" class="slider" id="slPertAmp">
+								<span id="labelPertAmp"></span>
+							</div>
+
+						</fieldset>
+					</form>
+					<div style="color:#888888;font-size:12pt;">
+					<br />
+					<p style="text-align" align="middle">
+						本网页参考<a href="https://beltoforion.de" style="color:#DDDDDD;font-size:12pt;">beltoforion.de</a>的<a href="https://github.com/beltoforion/Galaxy-Renderer-Typescript" style="color:#DDDDDD;font-size:12pt;">开源项目</a>，原作者真的太强了，用纯前端很好地还原了螺旋星系的形态和内部物质运动方式。虽然是采用随半径增大而扭转的椭圆来模拟旋臂处物质聚集的形态，但与实际理论能够得到的密度波波峰迹线是基本一致的。
+					</p>
+				</div>
+				</div> <!-- class=column-30 -->
+
+			</div> <!-- class=row -->
+
+		</div>
+	</div> <!-- id=main-->
+
+<script src="./galaxy-renderer-bundle.js"></script>
+<script>
+	try
+	{
+		var renderer = window.GalaxyRenderer.galaxy;
+		var uiController = window.GalaxyRenderer.uiController;
+
+		update(renderer);
+
+		function update(renderer) {
+			uiController.updateFromGalaxy()
+
+			// Physics option
+			document.getElementById("cbHasDarkMatter").checked = renderer.hasDarkMatter
+			document.getElementById("cbShowVelocity").checked = renderer.showVelocity
+
+			// Display options
+			document.getElementById("cbShowDensityWaves").checked = renderer.showDensityWaves
+			document.getElementById("cbShowAxis").checked = renderer.showAxis
+			document.getElementById("cbShowStars").checked = renderer.showStars
+			document.getElementById("cbShowDust").checked = renderer.showDust
+			document.getElementById("cbShowDustFilaments").checked = renderer.showDustFilaments
+			document.getElementById("cbShowH2").checked = renderer.showH2
+
+			// Physics options
+			document.getElementById("cbShowVelocity").checked = renderer.showVelocity
+			document.getElementById("cbHasDarkMatter").checked = renderer.hasDarkMatter;
+
+			// Galaxy properties
+			uiController.initilializeSlider('slTimeStep', 'labelTimeStep', 'timeStep')
+			uiController.initilializeSlider('slFov', 'labelFov', 'fov')
+			uiController.initilializeSlider('slDustSize', 'labelDustRenderSize', 'dustRenderSize')
+
+			// Density Waves
+			uiController.initilializeEditModeSlider('slRad', 'labelRad', 'rad')
+			uiController.initilializeEditModeSlider('slCoreRad', 'labelCoreRad', 'coreRad')
+			uiController.initilializeEditModeSlider('slAngOffset', 'labelAngularOffset', 'angleOffset')
+			uiController.initilializeEditModeSlider('slInnerEx', 'labelInnerEx', 'exInner')
+			uiController.initilializeEditModeSlider('slOutterEx', 'labelOutterEx', 'exOuter')
+			uiController.initilializeEditModeSlider('slPertN', 'labelPertN', 'pertN')
+			uiController.initilializeEditModeSlider('slPertAmp', 'labelPertAmp', 'pertAmp')
+
+			uiController.initilializeEditModeSlider('slBaseTemp', 'labelBaseTemp', 'baseTemp')
+
+		}
+		
+		function onSelectPreset() {
+			renderer.selectPreset(parseInt(document.getElementById("cbPreset").value))
+			update(renderer)
+		}
+
+		function onShowDensityWaves() {
+			var check = document.getElementById("cbShowDensityWaves").checked;
+			renderer.showDensityWaves = check;
+		}
+		
+		function onShowAxis() {
+			var check = document.getElementById("cbShowAxis").checked;
+			renderer.showAxis = check;
+		}
+
+		function onShowStars() {
+			var check = document.getElementById("cbShowStars").checked;
+			renderer.showStars = check;
+		}
+
+		function onShowDust() {
+			var check = document.getElementById("cbShowDust").checked;
+			renderer.showDust = check;
+		}
+
+		function onShowDustFilaments() {
+			var check = document.getElementById("cbShowDustFilaments").checked;
+			renderer.showDustFilaments = check;
+		}
+
+		function onShowH2() {
+			var check = document.getElementById("cbShowH2").checked;
+			renderer.showH2 = check;
+		}
+
+		function onShowVelocity() {
+			var check = document.getElementById("cbShowVelocity").checked;
+			renderer.showVelocity = check;
+		}
+
+		function onHasDarkMatter() {
+			var check = document.getElementById("cbHasDarkMatter").checked;
+			renderer.hasDarkMatter = check;
+		}
+
+	}
+	catch(Error)
+	{
+		alert(Error.message);
+	}
+</script>
+
+</body>
+</html>
